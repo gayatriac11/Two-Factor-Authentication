@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OTP Verification</title>
+  <style>
+    /* styles.css */
+    body {
+       font-family: Arial, sans-serif;
+       display: flex;
+       justify-content: center;
+       align-items: center;
+       height: 100vh;
+       margin: 0;
+       background: #f4f4f9;
+    }
+
+    .otp-container {
+       background: #fff;
+       padding: 2rem;
+       border-radius: 10px;
+       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+       text-align: center;
+    }
+
+    h1 {
+       margin-bottom: 1rem;
+       font-size: 1.5rem;
+    }
+
+    label {
+       display: block;
+       margin: 1rem 0 0.5rem;
+       font-size: 1rem;
+    }
+
+    input {
+       width: 100%;
+       padding: 0.5rem;
+       margin-bottom: 1rem;
+       border: 1px solid #ccc;
+       border-radius: 5px;
+    }
+
+    button {
+       padding: 0.75rem 1.5rem;
+       border: none;
+       background: #007bff;
+       color: #fff;
+       border-radius: 5px;
+       cursor: pointer;
+    }
+
+    button:hover {
+       background: #0056b3;
+    }
+
+    .error {
+      color: red;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="otp-container">
+    <h1>OTP Verification</h1>
+    <form id="otpForm">
+      <label for="mobile">Enter your mobile number:</label>
+      <input type="text" id="mobile" name="mobile" placeholder="e.g., +919876543210" required>
+      <button type="submit">Send OTP</button>
+      <p id="otpError" class="error" style="display: none;"></p>
+    </form>
+
+    <form id="verifyForm" style="display: none;">
+      <label for="otp">Enter OTP:</label>
+      <input type="text" id="otp" name="otp" placeholder="Enter the OTP" required>
+      <button type="submit">Verify OTP</button>
+      <p id="verifyError" class="error" style="display: none;"></p>
+    </form>
+  </div>
+
+  <script>
+    // JavaScript Code
+
+    // Handle sending OTP
+    document.getElementById("otpForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const mobile = document.getElementById("mobile").value;
+      const otpError = document.getElementById("otpError");
+
+      const response = await fetch("send_otp.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ mobile }),
+      });
+
+      const result = await response.text();
+
+      if (result.includes("OTP sent successfully")) {
+        // OTP sent successfully
+        alert(result);
+        otpError.style.display = "none";
+
+        // Show OTP verification form
+        document.getElementById("otpForm").style.display = "none";
+        document.getElementById("verifyForm").style.display = "block";
+
+        // Add a hidden input field to pass the mobile number to verify_otp.php
+        document.getElementById("verifyForm").innerHTML += `<input type="hidden" name="mobile" value="${mobile}">`;
+      } else {
+        // Error handling
+        otpError.style.display = "block";
+        otpError.innerText = result; // Display error message
+      }
+    });
+
+    // Handle OTP verification
+    document.getElementById("verifyForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const otp = document.getElementById("otp").value;
+      const mobile = document.querySelector('input[name="mobile"]').value;
+      const verifyError = document.getElementById("verifyError");
+
+      const response = await fetch("verify_otp.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ otp, mobile }),
+      });
+
+      const result = await response.text();
+
+      if (result.includes("OTP verified successfully")) {
+        // OTP verified successfully
+        alert(result);
+        verifyError.style.display = "none";
+      } else {
+        // Error handling
+        verifyError.style.display = "block";
+        verifyError.innerText = result; // Display error message
+      }
+    });
+  </script>
+</body>
+</html>
