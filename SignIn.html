@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to our Portal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e0f7fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 300px;
+            text-align: center;
+        }
+        .login-container h2 {
+            margin-bottom: 20px;
+            color: #00796b;
+        }
+        .input-container {
+            position: relative;
+        }
+        .login-container input[type="text"],
+        .login-container input[type="password"] {
+            width: 100%; /* Make the input fields responsive */
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box; /* Ensure padding doesn't affect width */
+        }
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #00796b;
+        }
+        .login-container button {
+            width: 100%; /* Match button width with input fields */
+            padding: 10px;
+            background-color: #00796b;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .login-container button:hover {
+            background-color: #004d40;
+        }
+        .forgot-password {
+            margin-top: 1rem;
+            display: inline-block;
+            color: #3b5998;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+        .sign-in {
+            color: #3b5998;
+            text-decoration: none;
+        }
+        .sign-in:hover {
+            text-decoration: underline;
+        }
+        .message {
+            color: red;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <form action="Login.php" method="POST">
+            <h2>Validate your Password</h2>
+            <input type="text" name="username" id="username" placeholder="Username" required>
+            <div class="input-container">
+                <input type="password" name="pass" id="password" placeholder="Password" required>
+                <span class="toggle-password" onclick="togglePasswordVisibility()">👁️</span>
+            </div>
+            <button type="submit" onsubmit="validatePassword(event)">Login</button>
+            <div class="message" id="message"></div>
+        </form>
+    </div>
+
+    <script>
+        function validatePassword(event) {
+            event.preventDefault(); // Prevent form submission
+
+            const password = document.getElementById("password").value;
+            const message = document.getElementById("message");
+
+            // Password validation criteria
+            const hasUpperCase = /[A-Z]/.test(password);
+            const hasLowerCase = /[a-z]/.test(password);
+            const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+            const hasNumber = /[0-9]/.test(password);
+            const minLength = 8;
+            const maxLength = 15;
+
+            if (password.length < minLength || password.length > maxLength) {
+                message.textContent = `Password length must be between ${minLength} and ${maxLength} characters.`;
+                return false;
+            } else if (hasUpperCase && hasLowerCase && hasSpecialChar && hasNumber) {
+                message.style.color = "green";
+                message.textContent = "Password is strong";
+                return true;
+            } else {
+                message.style.color = "red";
+                message.textContent = "Password is weak. It must include uppercase letters, lowercase letters, numbers, and special characters.";
+                return false;
+            }
+        }
+
+        function togglePasswordVisibility() {
+            const passwordField = document.getElementById("password");
+            const toggleIcon = document.querySelector(".toggle-password");
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                toggleIcon.textContent = "🙈"; // Change icon to closed eye
+            } else {
+                passwordField.type = "password";
+                toggleIcon.textContent = "👁️"; // Change icon to open eye
+            }
+        }
+    </script>
+
+</body>
+</html>
